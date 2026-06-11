@@ -313,6 +313,7 @@ header p { font-size: 14px; color: var(--color-texto); background-color: var(--c
 /* Resumen financiero */
 .resumen-checkout {
     background-color: #f9f6ff;
+    color: #111111;
     border: 1px solid rgba(176, 125, 255, 0.15);
     border-radius: 12px;
     padding: 14px;
