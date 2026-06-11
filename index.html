@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landy Bot</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="icon" type="image/x-icon" href="img/favicon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <div id="loader" class="loader-container">
+        <div class="spinner"></div>
+        <p>Cargando el negocio...</p>
+    </div>
+
+    <div id="up_div">
+        <img src="img/logo_2.png" class="logo_text" alt="logo_text">
+        <span>LandyBot de <a href="https://itsganimedes.github.io/NSSoftware/" target="_blank" style="text-decoration: none;">NSS</a></span>
+        <p>ARG</p>
+    </div>
+
+    <header id="header-negocio" style="display: none;">
+        <img id="logo-negocio" class="logo" src="" alt="Logo">
+        <h1 id="nombre-negocio"></h1>
+        <p id="eslogan-negocio"></p>
+        <div>
+            <span id="horario-negocio" class="info-badge"></span>
+            <span id="direccion-negocio" class="info-badge"></span>
+        </div>
+        <p id="demora-negocio"></p>
+    </header>
+
+    <!-- Buscador de productos -->
+    <div class="buscador-container">
+        <div class="buscador-wrapper">
+            <span class="buscador-icono">🔍</span>
+            <input 
+                type="text" 
+                id="input-busqueda" 
+                placeholder="Buscar productos..." 
+                oninput="filtrarCatalogo()"
+            />
+        </div>
+    </div>
+
+    <main class="container" id="catalogo"></main>
+
+        <!-- ROBOT -->
+    <div class="landy-robot-container">
+        <div class="landy-avatar">
+            <div class="robot-ears"></div>
+            <div class="robot-head">
+                <div class="robot-eyes">
+                    <span class="eye"></span>
+                    <span class="eye"></span>
+                </div>
+                <div class="robot-mouth"></div>
+            </div>
+            <div class="robot-body">
+                <div class="robot-screen">🤖</div>
+            </div>
+        </div>
+        <p class="robot-saludo" id="robot-mensaje">¡Hola! Soy Landy Bot. Armá tu pedido y lo enviemos juntos por WhatsApp.</p>
+    </div>
+
+    <div class="footer-pedido" id="footer-pedido">
+        <button class="btn-enviar-wa" onclick="abrirCheckout()">
+            <span>Finalizar Pedido</span>
+            <span id="total-pedido">$0.00</span>
+        </button>
+    </div>
+
+        <!-- BOTÓN FLOTANTE DE WHATSAPP (Para consultas directas) -->
+    <a href="#" id="btn-whatsapp-flotante" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- FOOTER DE LA PÁGINA -->
+    <footer class="site-footer">
+        <p>© 2026 <span id="footer-nombre-negocio">Mi Negocio</span>. Todos los derechos reservados.</p>
+        <p class="creado-por">Creado con <span>Landy Bot</span> ⚡</p>
+        <a href="https://itsganimedes.github.io/NSSoftware/" id="nss_link" target="_blank" style="text-decoration: none;">Por NSS <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+    </footer>
+
+    <!-- Modal de Checkout / Finalizar Pedido -->
+    <div id="modal-checkout" class="modal-container" style="display: none;">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h3>Finalizar tu Pedido</h3>
+                <button class="btn-cerrar-modal" onclick="cerrarCheckout()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- Resumen rápido -->
+                <div class="resumen-checkout">
+                    <p>Subtotal Productos: <span id="chk-subtotal">$0</span></p>
+                    <p id="fila-envio">Envío a domicilio: <span id="chk-envio">$0</span></p>
+                    <p id="fila-descuento" style="display: none; color: #27ae60;">Descuento: -<span id="chk-descuento">$0</span></p>
+                    <h4 class="total-destacado">Total a pagar: <span id="chk-total">$0</span></h4>
+                    <p id="aviso-envio-gratis" class="aviso-gratis" style="display: none;">¡Felicidades! Tienes envío gratis 🎉</p>
+                </div>
+
+                <!-- Formulario -->
+                <form id="form-pedido" onsubmit="procesarYEnviar(event)">
+                    <div class="grupo-campo">
+                        <label for="txt-nombre">Tu Nombre *</label>
+                        <input type="text" id="txt-nombre" required placeholder="Ej: Juan Pérez">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label>Método de Entrega *</label>
+                        <div class="opciones-flex">
+                            <label class="radio-card">
+                                <input type="radio" name="tipo_entrega" value="delivery" checked onchange="cambiarTipoEntrega('delivery')">
+                                <span>🛵 Delivery</span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="tipo_entrega" value="retiro" onchange="cambiarTipoEntrega('retiro')">
+                                <span>🏪 Retiro en Local</span>
+                            </label>
+                        </div>
+                        <!-- NUEVO ELEMENTO: Alerta dinámica para cuando no haya envíos disponibles -->
+                        <div id="aviso-no-envios" style="display: none; color: #e74c3c; font-size: 0.85rem; font-weight: bold; margin-top: 8px;"></div>
+                    </div>
+
+                    <div class="grupo-campo" id="campo-direccion">
+                        <label for="txt-direccion">Dirección de Entrega *</label>
+                        <input type="text" id="txt-direccion" required placeholder="Calle, número, departamento...">
+                    </div>
+
+                    <div class="grupo-campo">
+                        <label for="select-pago">Método de Pago *</label>
+                        <select id="select-pago" required>
+                            <option value="" disabled selected>Selecciona una opción</option>
+                            <option value="Efectivo">💵 Efectivo</option>
+                            <option value="Tarjeta">💳 Tarjeta de Débito / Crédito</option>
+                        </select>
+                    </div>
+
+                    <!-- NUEVO: Contenedor dinámico para mostrar el Alias de transferencia -->
+                    <div class="grupo-campo" id="contenedor-alias" style="display: none; background: #f8f9fa; padding: 12px; border-radius: 8px; border: 1px dashed #cbd5e1; margin-bottom: 15px;">
+                        <label style="font-weight: bold; margin-bottom: 6px; display: block; color: #475569; font-size: 0.9rem;">📍 Datos de Transferencia (Alias):</label>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <input type="text" id="lbl-alias" readonly style="flex: 1; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 6px; background: #ffffff; font-weight: bold; text-align: center; color: #1e293b;" value="">
+                            <button type="button" id="btn-copiar-alias" onclick="copiarAlias()" style="padding: 8px 14px; background: #2563eb; color: #ffffff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; white-space: nowrap; transition: background 0.2s;">📋 Copiar</button>
+                        </div>
+                        <span id="msg-copiado" style="display: none; color: #16a34a; font-size: 0.75rem; margin-top: 5px; font-weight: bold; text-align: center;">¡Copiado al portapapeles con éxito! 🎉</span>
+                    </div>
+
+                    <!-- Campo de Aclaraciones / Notas -->
+                    <div class="grupo-campo">
+                        <label for="txt-notas">Notas o Especificaciones (Opcional)</label>
+                        <textarea id="txt-notas" rows="2" placeholder="Ej: Sin cebolla, aderezos aparte, traer cambio de $5.000..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; resize: vertical;"></textarea>
+                    </div>
+
+                    <!-- Sección del Cupón -->
+                    <div class="grupo-campo">
+                        <label for="txt-cupon">¿Tienes un cupón de descuento?</label>
+                        <div class="cupon-wrapper">
+                            <input type="text" id="txt-cupon" placeholder="Ej: PROMO10">
+                            <button type="button" class="btn-aplicar-cupon" onclick="validarCupon()">Aplicar</button>
+                        </div>
+                        <span id="msg-cupon" class="msg-feedback"></span>
+                    </div>
+
+                    <button type="submit" class="btn-confirmar-whatsapp">
+                        🚀 Confirmar y Enviar por WhatsApp
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
