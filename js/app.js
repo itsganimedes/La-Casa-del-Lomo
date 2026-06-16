@@ -1,9 +1,9 @@
-const SPREADSHEET_ID = "1gTnrmHYfCgpZkKUWD5vBgPsTQmmi1Ikrd8419IUVDsI";
+const SPREADSHEET_ID = "1ChIBBBxyhvd38hZannCdLnpvo52folTS";
 
 // Parámetro &gid para apuntar exactamente a tus pestañas reales
-const URL_CONFIG = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1801309830`;
-const URL_PRODUCTOS = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1739007170`;
-const URL_CUPONES = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1141912272`;
+const URL_CONFIG = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1775685281`;
+const URL_PRODUCTOS = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=30337326`;
+const URL_CUPONES = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=78980889`;
 
 let datosApp = { configuracion: {}, productos: [], cupones: {} };
 let carrito = {};
